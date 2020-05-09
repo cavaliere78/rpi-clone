@@ -97,6 +97,7 @@ usage: $PGM sdN {-v|--verbose} {-f|--force-initialize} {-f2}
          {-s|--setup host} {-e|--edit-fstab sdX } {-m|--mountdir dir }
          {-L|--label-partitions label} {-l|--leave-sd-usb-boot}
          {-a|--all-sync} {-F|--Force-sync} {-x} {-V|--version}
+	 {-S|--sparse}
          {--convert-fstab-to-partuuid}
          {--exclude=PATTERN} {--exclude-from=FILE}
 
@@ -139,6 +140,7 @@ usage: $PGM sdN {-v|--verbose} {-f|--force-initialize} {-f2}
                 If a source partition mount error, skip it and do other syncs.
     -x      - use set -x for very verbose bash shell script debugging
     -V      - print rpi-clone version.
+    -S      - handle sparse files efficiently (eg.: Docker containers)
 
   Clone a booted file system to a destination disk which is bootable.
 
@@ -753,6 +755,7 @@ setup_args=""
 edit_fstab_name=""
 ext_label=""
 verbose="no"
+sparse="no"
 
 force_initialize=0
 force_2_parts=0
@@ -770,6 +773,10 @@ p1_size_new=0
 while [ "$1" ]
 do
 	case "$1" in
+		-S|--sparse)
+			sparse="yes"
+			rsync_options=${rsync_options}S
+			;;	
 		-v|--verbose)
 			verbose="yes"
 			rsync_options=${rsync_options}v
